@@ -1,4 +1,5 @@
 ﻿open System
+open FSharpPlus
 
 
 // Some exercises to learn ROP/Kleisli composition subset
@@ -39,18 +40,18 @@ let nameNotLessThan10Characters (data) =
     else
         Error "Name cannot be less than 10 characters!"
 
-let (>>=) f g = Result.bind g f
-
-let validateRequest request =
-    request
+let validateRequest1 data =
+    data
     >>= nameNotBlank
     >>= nameNotLessThan10Characters
     >>= emailNotBlank
 
-let userData = { Name = "hello world"; Email = "kamaki.h4@gmail.com" }
+let userData1 = { Name = ""; Email = "kamaki.h4@gmail.com" }
 
-// validateRequest request 
+// validateRequest1 (Ok userData1)
 
 // EX2
-// TODO
+// Multiple parameter validators, and using different applicatives and functors
+// to lift and construct different unlifted types into monadic ones.
+// We'll reuse other previous validator functions.
 
