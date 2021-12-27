@@ -5,6 +5,8 @@ open FSharpPlus
 // Some exercises to learn ROP/Kleisli composition subset
 // Derived from Schott Wlaschin ROP examples
 
+let inline (|>!) x f = tap f x
+
 
 
 // EX1
