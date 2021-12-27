@@ -29,15 +29,9 @@ let emailNotBlank data =
     else
         Error "Email is blank!"
 
-let nameNotLessThanN name n =
-    if String.length <| name < n |> not then
-        true
-    else
-        false
 
-
-let nameNotLessThan10Characters (data) =
-    if nameNotLessThanN data.Name 10 then
+let nameNotLessThanNCharacters n data =
+    if String.length data.Name < n then
         Ok data
     else
         Error "Name cannot be less than 10 characters!"
@@ -45,7 +39,7 @@ let nameNotLessThan10Characters (data) =
 let validateRequest1 data =
     data
     >>= nameNotBlank
-    >>= nameNotLessThan10Characters
+    >>= nameNotLessThanNCharacters 10
     >>= emailNotBlank
 
 let userData1 = { Name = ""; Email = "kamaki.h4@gmail.com" }
@@ -57,3 +51,21 @@ let userData1 = { Name = ""; Email = "kamaki.h4@gmail.com" }
 // to lift and construct different unlifted types into monadic ones.
 // We'll reuse other previous validator functions.
 
+let decoratedNamed f l data =
+    let r = f + data.Name + l
+    Ok r
+
+let doIOStuff data =
+    // Simulate exception->error
+    // Usually, IO stuff returns unit
+    if data |> String.endsWith "Sir" then
+        Ok ()
+    else
+        Error "Name must ends with Sir!"
+
+let validateRequest2 data =
+    data
+    >>= decoratedNamed "Sir " " Sir"
+    >>= doIOStuff
+
+let userData2 = { Name = "Lancelot"; Email = "lancelot@email.com" }
