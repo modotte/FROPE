@@ -5,6 +5,10 @@ open FSharpPlus
 // Some exercises to learn ROP/Kleisli composition subset
 // Derived from Schott Wlaschin ROP examples
 
+// Override FSharplus functor operator
+// TODO: Need to checkout why
+let inline (<!>) x f = map f x
+
 let inline (|>!) x f = tap f x
 
 
@@ -30,7 +34,7 @@ let emailNotBlank data =
         Error "Email is blank!"
 
 
-let nameNotLessThanNCharacters n data =
+let nameNotLessThanNCharacters (n: int) (data: Data) : Result<Data, string> =
     if String.length data.Name < n then
         Ok data
     else
@@ -51,21 +55,19 @@ let userData1 = { Name = ""; Email = "kamaki.h4@gmail.com" }
 // to lift and construct different unlifted types into monadic ones.
 // We'll reuse other previous validator functions.
 
-let decoratedNamed f l data =
-    let r = f + data.Name + l
-    Ok r
+let decoratedName f l (data: Data) =
+    { data with Name = $"{f} {data.Name} {l}" }
 
 let doIOStuff data =
     // Simulate exception->error
     // Usually, IO stuff returns unit
-    if data |> String.endsWith "Sir" then
-        Ok ()
-    else
-        Error "Name must ends with Sir!"
+    ()
 
-let validateRequest2 data =
+let validateRequest2 (data: Result<Data, string>): Result<Data, string> =
     data
-    >>= decoratedNamed "Mr " " Sir"
-    >>= doIOStuff
+    >>= (nameNotLessThanNCharacters 10)
+    >>= (tap doIOStuff >> Ok)
+    <!> (decoratedName "Sir" "Jameson")
+
 
 let userData2 = { Name = "Lancelot"; Email = "lancelot@email.com" }
