@@ -65,7 +65,7 @@ let doIOStuff data =
 
 let validateRequest2 data =
     data
-    >>= decoratedNamed "Sir " " Sir"
+    >>= decoratedNamed "Mr " " Sir"
     >>= doIOStuff
 
 let userData2 = { Name = "Lancelot"; Email = "lancelot@email.com" }
