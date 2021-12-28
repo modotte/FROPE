@@ -66,7 +66,7 @@ let doIOStuff data =
 let validateRequest2 (data: Result<Data, string>): Result<Data, string> =
     data
     >>= (nameNotLessThanNCharacters 10)
-    >>= (tap doIOStuff >> Ok)
+    |>! doIOStuff
     <!> (decoratedName "Sir" "Jameson")
 
 
